@@ -29,7 +29,7 @@ run:
 
 .PHONY: run-bin
 run-bin:
-	./todo.exe
+	./todo
 
 .PHONY: restore-db
 restore-db:
@@ -41,28 +41,28 @@ restore-db-windows:
 
 .PHONY: add-sample
 add-sample:
-	./todo.exe -a '{"id":99, "title":"sample item", "done":true}'
+	./todo -a '{"id":99, "title":"sample item", "done":true}'
 
 .PHONY: add
 add:
-	./todo.exe -a '$(item_json)'
+	./todo -a '$(item_json)'
 
 .PHONY: list
 list:
-	./todo.exe -l
+	./todo -l
 
 .PHONY: query
 query:
-	./todo.exe -q $(id)
+	./todo -q $(id)
 
 .PHONY: update
 update:
-	./todo.exe -u '$(item_json)'
+	./todo -u '$(item_json)'
 
 .PHONY: delete
 delete:
-	./todo.exe -d $(id)
+	./todo -d $(id)
 
 .PHONY: change-status
 change-status:
-	./todo.exe -q $(id) -s=$(done)
+	./todo -q $(id) -s=$(done)
