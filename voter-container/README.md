@@ -14,7 +14,7 @@ To clone the repository, use the following command:
 
 ```bash
 git clone https://github.com/MarkNisarg/CS-T680-CNSE.git
-cd voter-api
+cd voter-container
 ```
 
 ## Usage
