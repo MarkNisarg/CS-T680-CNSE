@@ -78,18 +78,73 @@ func (va *VotesAPI) WelcomeToVotesAPI(c *gin.Context) {
 // Implementation of GET /votes.
 // Returns all Votes with all votes.
 func (va *VotesAPI) ListAllVotes(c *gin.Context) {
-	Votes, err := va.votesList.GetAllVotes()
+	allVotes, err := va.votesList.GetAllVotes()
 	if err != nil {
 		log.Println("Error getting Votes: ", err)
 		c.AbortWithStatus(http.StatusBadRequest)
 		return
 	}
 
-	if Votes == nil {
-		Votes = make([]votes.Vote, 0)
+	if allVotes == nil {
+		allVotes = make([]votes.Vote, 0)
 	}
 
-	c.JSON(http.StatusOK, Votes)
+	voterAPIURL := "http://localhost:1080"
+	pollAPIURL := "http://localhost:1081"
+
+	response := make([]map[string]interface{}, len(allVotes))
+	for i, vote := range allVotes {
+		link := fmt.Sprintf("/votes/%d", vote.VoteID)
+
+		response[i] = map[string]interface{}{
+			"voteId":    vote.VoteID,
+			"voterId":   vote.VoterID,
+			"pollId":    vote.PollID,
+			"voteValue": vote.VoteValue,
+			"links": map[string]interface{}{
+				"self": map[string]interface{}{
+					"get": map[string]interface{}{
+						"method": "GET",
+						"url":    link,
+					},
+					"delete": map[string]interface{}{
+						"method": "DELETE",
+						"url":    link,
+					},
+				},
+				"voter": map[string]interface{}{
+					"get": map[string]interface{}{
+						"method": "GET",
+						"url":    fmt.Sprintf("%s/voters/%d", voterAPIURL, vote.VoterID),
+					},
+					"update": map[string]interface{}{
+						"method": "PUT",
+						"url":    fmt.Sprintf("%s/voters/%d", voterAPIURL, vote.VoterID),
+					},
+					"delete": map[string]interface{}{
+						"method": "DELETE",
+						"url":    fmt.Sprintf("%s/voters/%d", voterAPIURL, vote.VoterID),
+					},
+				},
+				"poll": map[string]interface{}{
+					"get": map[string]interface{}{
+						"method": "GET",
+						"url":    fmt.Sprintf("%s/polls/%d", pollAPIURL, vote.PollID),
+					},
+					"update": map[string]interface{}{
+						"method": "PUT",
+						"url":    fmt.Sprintf("%s/polls/%d", pollAPIURL, vote.PollID),
+					},
+					"delete": map[string]interface{}{
+						"method": "DELETE",
+						"url":    fmt.Sprintf("%s/polls/%d", pollAPIURL, vote.PollID),
+					},
+				},
+			},
+		}
+	}
+
+	c.JSON(http.StatusOK, response)
 }
 
 // Implementation of GET /votes/:id.
@@ -110,7 +165,57 @@ func (va *VotesAPI) GetVote(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, vote)
+	voterAPIURL := "http://localhost:1080"
+	pollAPIURL := "http://localhost:1081"
+
+	response := map[string]interface{}{
+		"voteId":    vote.VoteID,
+		"voterId":   vote.VoterID,
+		"pollId":    vote.PollID,
+		"voteValue": vote.VoteValue,
+		"links": map[string]interface{}{
+			"self": map[string]interface{}{
+				"get": map[string]interface{}{
+					"method": "GET",
+					"url":    fmt.Sprintf("/votes/%d", vote.VoteID),
+				},
+				"delete": map[string]interface{}{
+					"method": "DELETE",
+					"url":    fmt.Sprintf("/votes/%d", vote.VoteID),
+				},
+			},
+			"voter": map[string]interface{}{
+				"get": map[string]interface{}{
+					"method": "GET",
+					"url":    fmt.Sprintf("%s/voters/%d", voterAPIURL, vote.VoterID),
+				},
+				"update": map[string]interface{}{
+					"method": "PUT",
+					"url":    fmt.Sprintf("%s/voters/%d", voterAPIURL, vote.VoterID),
+				},
+				"delete": map[string]interface{}{
+					"method": "DELETE",
+					"url":    fmt.Sprintf("%s/voters/%d", voterAPIURL, vote.VoterID),
+				},
+			},
+			"poll": map[string]interface{}{
+				"get": map[string]interface{}{
+					"method": "GET",
+					"url":    fmt.Sprintf("%s/pools/%d", pollAPIURL, vote.PollID),
+				},
+				"update": map[string]interface{}{
+					"method": "PUT",
+					"url":    fmt.Sprintf("%s/pools/%d", pollAPIURL, vote.PollID),
+				},
+				"delete": map[string]interface{}{
+					"method": "DELETE",
+					"url":    fmt.Sprintf("%s/pools/%d", pollAPIURL, vote.PollID),
+				},
+			},
+		},
+	}
+
+	c.JSON(http.StatusOK, response)
 }
 
 // Implementation of POST /votes/:id.

@@ -63,10 +63,10 @@ echo "Testing Votes API Scenarios..."
 
 # Scenario 11: PUT request to modify an item by ID (replace ID)
 echo "Scenario 11: Add vote in votes list and update voter history in voter"
-curl curl -d '{ "voterId": 1, "pollId": 1, "voteValue": 1 }' -H "Content-Type: application/json" -X POST $votes_api_url/votes/1
-curl curl -d '{ "voterId": 2, "pollId": 1, "voteValue": 1 }' -H "Content-Type: application/json" -X POST $votes_api_url/votes/2
-curl curl -d '{ "voterId": 1, "pollId": 2, "voteValue": 2 }' -H "Content-Type: application/json" -X POST $votes_api_url/votes/3
-curl curl -d '{ "voterId": 2, "pollId": 2, "voteValue": 3 }' -H "Content-Type: application/json" -X POST $votes_api_url/votes/4
+curl -d '{ "voterId": 1, "pollId": 1, "voteValue": 1 }' -H "Content-Type: application/json" -X POST $votes_api_url/votes/1
+curl -d '{ "voterId": 2, "pollId": 1, "voteValue": 1 }' -H "Content-Type: application/json" -X POST $votes_api_url/votes/2
+curl -d '{ "voterId": 1, "pollId": 2, "voteValue": 2 }' -H "Content-Type: application/json" -X POST $votes_api_url/votes/3
+curl -d '{ "voterId": 2, "pollId": 2, "voteValue": 3 }' -H "Content-Type: application/json" -X POST $votes_api_url/votes/4
 
 # Scenario 12: Get all votes.
 echo "Scenario 12: Retrieve all votes"
