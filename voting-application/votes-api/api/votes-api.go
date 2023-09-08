@@ -210,7 +210,7 @@ func (va *VotesAPI) AddVote(c *gin.Context) {
 	voterID := vote.VoterID
 
 	// Construct the URL for adding the vote to the voter's vote history.
-	voterPollURL := fmt.Sprintf("%s/voters/%s/polls/%s", va.voterAPIURL, strconv.Itoa(int(voterID)), strconv.Itoa(int(vote.VoteID)))
+	voterPollURL := fmt.Sprintf("%s/voters/%s/polls/%s", va.voterAPIURL, strconv.Itoa(int(voterID)), strconv.Itoa(int(vote.PollID)))
 
 	// Create a JSON payload for adding the vote to the voter's vote history.
 	// You can modify this payload according to your API's requirements.
@@ -253,7 +253,7 @@ func (va *VotesAPI) DeleteVote(c *gin.Context) {
 
 	// Delete the vote from the voter's vote history using the voter API.
 	voterID := vote.VoterID
-	voterPollURL := fmt.Sprintf("%s/voters/%s/polls/%s", va.voterAPIURL, strconv.Itoa(int(voterID)), strconv.Itoa(int(vote.VoteID)))
+	voterPollURL := fmt.Sprintf("%s/voters/%s/polls/%s", va.voterAPIURL, strconv.Itoa(int(voterID)), strconv.Itoa(int(vote.PollID)))
 
 	// Make an HTTP DELETE request to remove the vote from the voter's vote history.
 	resp, err := va.apiClient.R().

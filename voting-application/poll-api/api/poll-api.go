@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -79,7 +80,33 @@ func (pa *PollAPI) ListAllVPolls(c *gin.Context) {
 		polls = make([]poll.Poll, 0)
 	}
 
-	c.JSON(http.StatusOK, polls)
+	pollResponses := make([]map[string]interface{}, len(polls))
+
+	for i, poll := range polls {
+		pollResponse := map[string]interface{}{
+			"pollId":       poll.PollID,
+			"pollTitle":    poll.PollTitle,
+			"pollQuestion": poll.PollQuestion,
+			"pollOptions":  poll.PollOptions,
+			"links": map[string]interface{}{
+				"get": map[string]interface{}{
+					"method": "GET",
+					"url":    fmt.Sprintf("/polls/%d", poll.PollID),
+				},
+				"update": map[string]interface{}{
+					"method": "PUT",
+					"url":    fmt.Sprintf("/polls/%d", poll.PollID),
+				},
+				"delete": map[string]interface{}{
+					"method": "DELETE",
+					"url":    fmt.Sprintf("/polls/%d", poll.PollID),
+				},
+			},
+		}
+		pollResponses[i] = pollResponse
+	}
+
+	c.JSON(http.StatusOK, pollResponses)
 }
 
 // Implementation of GET /polls/:id.
@@ -100,7 +127,28 @@ func (pa *PollAPI) GetPoll(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, poll)
+	response := map[string]interface{}{
+		"pollId":       poll.PollID,
+		"pollTitle":    poll.PollTitle,
+		"pollQuestion": poll.PollQuestion,
+		"pollOptions":  poll.PollOptions,
+		"links": map[string]interface{}{
+			"get": map[string]interface{}{
+				"method": "GET",
+				"url":    fmt.Sprintf("/polls/%d", poll.PollID),
+			},
+			"update": map[string]interface{}{
+				"method": "PUT",
+				"url":    fmt.Sprintf("/polls/%d", poll.PollID),
+			},
+			"delete": map[string]interface{}{
+				"method": "DELETE",
+				"url":    fmt.Sprintf("/polls/%d", poll.PollID),
+			},
+		},
+	}
+
+	c.JSON(http.StatusOK, response)
 }
 
 // Implementation of POST /polls/:id.
@@ -186,7 +234,31 @@ func (pa *PollAPI) GetPollOptions(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, pollOptions)
+	pollOptionsResponses := make([]map[string]interface{}, len(pollOptions))
+
+	for i, pollOption := range pollOptions {
+		pollOptionResponse := map[string]interface{}{
+			"pollOptionID":   pollOption.PollOptionID,
+			"pollOptionText": pollOption.PollOptionText,
+			"links": map[string]interface{}{
+				"get": map[string]interface{}{
+					"method": "GET",
+					"url":    fmt.Sprintf("/polls/%s/options/%d", strconv.Itoa(int(pollIDUint)), pollOption.PollOptionID),
+				},
+				"update": map[string]interface{}{
+					"method": "PUT",
+					"url":    fmt.Sprintf("/polls/%s/options/%d", strconv.Itoa(int(pollIDUint)), pollOption.PollOptionID),
+				},
+				"delete": map[string]interface{}{
+					"method": "DELETE",
+					"url":    fmt.Sprintf("/polls/%s/options/%d", strconv.Itoa(int(pollIDUint)), pollOption.PollOptionID),
+				},
+			},
+		}
+		pollOptionsResponses[i] = pollOptionResponse
+	}
+
+	c.JSON(http.StatusOK, pollOptionsResponses)
 }
 
 // Implementation of GET /polls/:id/options/:optionid.
@@ -215,7 +287,26 @@ func (pa *PollAPI) GetPollOption(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, pollOption)
+	response := map[string]interface{}{
+		"pollOptionID":   pollOption.PollOptionID,
+		"pollOptionText": pollOption.PollOptionText,
+		"links": map[string]interface{}{
+			"get": map[string]interface{}{
+				"method": "GET",
+				"url":    fmt.Sprintf("/polls/%s/options/%d", strconv.Itoa(int(pollIDUint)), pollOption.PollOptionID),
+			},
+			"update": map[string]interface{}{
+				"method": "PUT",
+				"url":    fmt.Sprintf("/polls/%s/options/%d", strconv.Itoa(int(pollIDUint)), pollOption.PollOptionID),
+			},
+			"delete": map[string]interface{}{
+				"method": "DELETE",
+				"url":    fmt.Sprintf("/polls/%s/options/%d", strconv.Itoa(int(pollIDUint)), pollOption.PollOptionID),
+			},
+		},
+	}
+
+	c.JSON(http.StatusOK, response)
 }
 
 // Implementation of POST /polls/:id/polls/:optionid.

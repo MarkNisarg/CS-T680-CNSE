@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -79,7 +80,33 @@ func (va *VoterAPI) ListAllVoters(c *gin.Context) {
 		voters = make([]voter.Voter, 0)
 	}
 
-	c.JSON(http.StatusOK, voters)
+	voterResponses := make([]map[string]interface{}, len(voters))
+
+	for i, voter := range voters {
+		voterResponse := map[string]interface{}{
+			"voterId":     voter.VoterID,
+			"firstName":   voter.FirstName,
+			"lastName":    voter.LastName,
+			"voteHistory": voter.VoteHistory,
+			"links": map[string]interface{}{
+				"get": map[string]interface{}{
+					"method": "GET",
+					"url":    fmt.Sprintf("/voters/%d", voter.VoterID),
+				},
+				"update": map[string]interface{}{
+					"method": "PUT",
+					"url":    fmt.Sprintf("/voters/%d", voter.VoterID),
+				},
+				"delete": map[string]interface{}{
+					"method": "DELETE",
+					"url":    fmt.Sprintf("/voters/%d", voter.VoterID),
+				},
+			},
+		}
+		voterResponses[i] = voterResponse
+	}
+
+	c.JSON(http.StatusOK, voterResponses)
 }
 
 // Implementation of GET /voters/:id.
@@ -100,7 +127,28 @@ func (va *VoterAPI) GetVoter(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, voter)
+	response := map[string]interface{}{
+		"voterId":     voter.VoterID,
+		"firstName":   voter.FirstName,
+		"lastName":    voter.LastName,
+		"voteHistory": voter.VoteHistory,
+		"links": map[string]interface{}{
+			"get": map[string]interface{}{
+				"method": "GET",
+				"url":    fmt.Sprintf("/voters/%d", voter.VoterID),
+			},
+			"update": map[string]interface{}{
+				"method": "PUT",
+				"url":    fmt.Sprintf("/voters/%d", voter.VoterID),
+			},
+			"delete": map[string]interface{}{
+				"method": "DELETE",
+				"url":    fmt.Sprintf("/voters/%d", voter.VoterID),
+			},
+		},
+	}
+
+	c.JSON(http.StatusOK, response)
 }
 
 // Implementation of POST /voters/:id.
@@ -215,7 +263,31 @@ func (va *VoterAPI) GetVoterHistory(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, voterHistory)
+	voterHistoryResponses := make([]map[string]interface{}, len(voterHistory))
+
+	for i, voterPoll := range voterHistory {
+		voterHistoryResponse := map[string]interface{}{
+			"pollId":   voterPoll.PollID,
+			"voteDate": voterPoll.VoteDate,
+			"links": map[string]interface{}{
+				"get": map[string]interface{}{
+					"method": "GET",
+					"url":    fmt.Sprintf("/voters/%s/polls/%d", strconv.Itoa(int(voterIDUint)), voterPoll.PollID),
+				},
+				"update": map[string]interface{}{
+					"method": "PUT",
+					"url":    fmt.Sprintf("/voters/%s/polls/%d", strconv.Itoa(int(voterIDUint)), voterPoll.PollID),
+				},
+				"delete": map[string]interface{}{
+					"method": "DELETE",
+					"url":    fmt.Sprintf("/voters/%s/polls/%d", strconv.Itoa(int(voterIDUint)), voterPoll.PollID),
+				},
+			},
+		}
+		voterHistoryResponses[i] = voterHistoryResponse
+	}
+
+	c.JSON(http.StatusOK, voterHistoryResponses)
 }
 
 // Implementation of GET /voters/:id/polls/:pollId.
@@ -244,7 +316,26 @@ func (va *VoterAPI) GetVoterPoll(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, voterPoll)
+	response := map[string]interface{}{
+		"pollId":   voterPoll.PollID,
+		"voteDate": voterPoll.VoteDate,
+		"links": map[string]interface{}{
+			"get": map[string]interface{}{
+				"method": "GET",
+				"url":    fmt.Sprintf("/voters/%s/polls/%d", strconv.Itoa(int(voterIDUint)), voterPoll.PollID),
+			},
+			"update": map[string]interface{}{
+				"method": "PUT",
+				"url":    fmt.Sprintf("/voters/%s/polls/%d", strconv.Itoa(int(voterIDUint)), voterPoll.PollID),
+			},
+			"delete": map[string]interface{}{
+				"method": "DELETE",
+				"url":    fmt.Sprintf("/voters/%s/polls/%d", strconv.Itoa(int(voterIDUint)), voterPoll.PollID),
+			},
+		},
+	}
+
+	c.JSON(http.StatusOK, response)
 }
 
 // Implementation of POST /voters/:id/polls/:pollId.
